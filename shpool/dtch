@@ -1,0 +1,5 @@
+#!/bin/sh
+# dtch [session] — detach a shpool session (default: the one you're inside).
+exec "${SHPOOL_BIN:-$HOME/.cargo/bin/shpool}" \
+  --socket "${SHPOOL_RUN_DIR:-$HOME/.local/run/shpool}/shpool.socket" \
+  detach "$@"

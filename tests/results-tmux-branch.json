@@ -1,0 +1,121 @@
+{
+  "harness_version": "1.0",
+  "tool": "tmux-branch",
+  "run_id": "sp2c3ef1",
+  "config": {
+    "name": "tmux-branch",
+    "new_or_attach_cmd": "env ATT_SOCKET=jerryspec-harness /home/jerry/Workspace/literature-review/session-spec-solutions/tmux-branch/att {session}",
+    "pre": "",
+    "post": "tmux -L jerryspec-harness kill-server 2>/dev/null || true"
+  },
+  "started": "2026-07-05T21:26:28-0700",
+  "pty": {
+    "cols": 120,
+    "rows": 32,
+    "term": "xterm-256color"
+  },
+  "tests": {
+    "T1": {
+      "pass": true,
+      "bytes_scanned": 44643,
+      "clients_scanned": 12,
+      "violations": [],
+      "detail": "44643 bytes over 12 clients scanned; 0 forbidden mouse/alt-screen enable sequences"
+    },
+    "T2": {
+      "pass": true,
+      "distinct_markers": 200,
+      "required": 190,
+      "ascending_first_occurrence": true,
+      "scrollback_erase_after_replay": false,
+      "detail": "200/200 distinct markers replayed to fresh client, ascending=True, ED3-after-replay=False"
+    },
+    "T3": {
+      "pass": true,
+      "counter_pid": 1488637,
+      "started_counting": true,
+      "pid_alive_after_client_kill": true,
+      "count_before_kill": 1,
+      "count_after_kill": [
+        17,
+        24
+      ],
+      "still_advancing": true,
+      "interactive_after_reattach": true,
+      "shell_pid_before_kill": 1488524,
+      "shell_pid_after_reattach": 1488524,
+      "same_shell_after_reattach": true,
+      "detail": "counter pid 1488637 alive=True advancing=True reattach-interactive=True same-shell=True ($$ 1488524 -> 1488524)"
+    },
+    "T4": {
+      "pass": true,
+      "violations": [],
+      "sessions": [
+        "sp2c3ef1-S1",
+        "sp2c3ef1-S2",
+        "sp2c3ef1-S3",
+        "sp2c3ef1-S4",
+        "sp2c3ef1-S5"
+      ],
+      "concurrently_interactive": 5,
+      "detail": "5/5 sessions concurrently interactive, 0 isolation violations"
+    },
+    "T5": {
+      "pass": true,
+      "contexts": [
+        {
+          "context": "initial-attach-S1",
+          "client": "T2-A-S1",
+          "pass": true,
+          "token": "PING-39e9d713"
+        },
+        {
+          "context": "reattach-S1-after-abrupt-kill",
+          "client": "T2-B-S1",
+          "pass": true,
+          "token": "PING-719c6bb2"
+        },
+        {
+          "context": "reattach-S1-after-T3-kill",
+          "client": "T3-C-S1",
+          "pass": true,
+          "token": "PING-86b91676"
+        },
+        {
+          "context": "concurrent-reattach-S1",
+          "client": "T4-re-S1",
+          "pass": true,
+          "token": "PING-83056f62"
+        },
+        {
+          "context": "concurrent-reattach-S2",
+          "client": "T4-re-S2",
+          "pass": true,
+          "token": "PING-88d4bf77"
+        },
+        {
+          "context": "concurrent-reattach-S3",
+          "client": "T4-re-S3",
+          "pass": true,
+          "token": "PING-7fbbe5d1"
+        },
+        {
+          "context": "concurrent-reattach-S4",
+          "client": "T4-re-S4",
+          "pass": true,
+          "token": "PING-08bb093d"
+        },
+        {
+          "context": "concurrent-reattach-S5",
+          "client": "T4-re-S5",
+          "pass": true,
+          "token": "PING-4ba4b872"
+        }
+      ],
+      "detail": "8/8 attach contexts answered within 5s after stray-byte burst"
+    }
+  },
+  "post_exit": 0,
+  "all_pass": true,
+  "finished": "2026-07-05T21:26:54-0700"
+}

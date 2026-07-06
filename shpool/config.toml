@@ -1,0 +1,28 @@
+# shpool 0.11.0 config for the terminal-session spec (see README.md here and ../../REPORT.md)
+
+# R4: on reattach, replay up to the last 10000 history lines into the client
+# as plain rendered text (goes straight into the terminal's native scrollback).
+# TUI redraws are collapsed to their final visual state by shpool's internal
+# vt100 spool, so no escape soup is replayed.
+session_restore_mode = { lines = 10000 }
+
+# In-session indicator (user-requested): decorate the shell prompt with the
+# session name, e.g. "shpool:work" before your usual prompt.
+# Set to "" for a fully undecorated prompt.
+prompt_prefix = "shpool:$SHPOOL_SESSION_NAME "
+
+# Detach key (user-requested): a SINGLE-key binding, Ctrl-q -> detach.
+# Unlike the default two-key chord (Ctrl-Space Ctrl-q), a single-key binding
+# has no prefix to wait on, so no key is ever latched/delayed: every byte
+# except Ctrl-q itself passes through verbatim and immediately. Deliberate
+# R2 exception: Ctrl-q never reaches inner programs (it is rarely used;
+# historically XON flow control). Detaching also works by closing the
+# terminal window/tab, or `dtch <name>` from another terminal.
+# For zero captured keys, replace the block with: keybinding = []
+[[keybinding]]
+binding = "Ctrl-q"
+action = "detach"
+
+# Never print a message of the day on attach. This is shpool's default;
+# stated explicitly because the spec demands an invisible attach.
+motd = "never"

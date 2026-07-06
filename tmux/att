@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# att <name> — attach-or-create a persistent named session (terminal-session-spec).
+#
+# tmux runs on a PRIVATE socket (-L jerryspec) with native.tmux.conf (normal
+# screen, no modes, no bindings, mouse off).  Before attaching to an EXISTING
+# session, the scrolled-off pane history is printed into this terminal so it
+# lands in the terminal's NATIVE scrollback (R4); then we exec tmux attach.
+# The visible screen is never replayed (tmux repaints it on attach), so there
+# is no duplication.
+#
+#   att            list sessions on the private socket
+#   att work       create-or-attach session "work"
+#
+# Env overrides: ATT_SOCKET (socket name), ATT_CONF (config path).
+
+set -eu
+
+SELF_DIR=$(cd "$(dirname "$(readlink -f "$0")")" && pwd)
+SOCK=${ATT_SOCKET:-jerryspec}
+CONF=${ATT_CONF:-$SELF_DIR/native.tmux.conf}
+
+# Always pass -f: it only takes effect on the invocation that spawns the
+# server, but we cannot know in advance which invocation that is.
+T() { tmux -L "$SOCK" -f "$CONF" "$@"; }
+
+if [ $# -eq 0 ]; then
+    T list-sessions 2>/dev/null || echo "no sessions on socket '$SOCK'"
+    exit 0
+fi
+name=$1
+
+if [ -n "${TMUX:-}" ]; then
+    echo "att: refusing to nest inside tmux" >&2
+    exit 1
+fi
+
+# Terminal geometry (used for session creation and for the scroll-out pad).
+# stty can report "0 0" on an odd pty; treat anything below 2x2 as unknown.
+rows=$(stty size </dev/tty 2>/dev/null | cut -d' ' -f1) || rows=
+cols=$(stty size </dev/tty 2>/dev/null | cut -d' ' -f2) || cols=
+case "$rows" in ''|*[!0-9]*) rows=24;; esac
+case "$cols" in ''|*[!0-9]*) cols=80;; esac
+[ "$rows" -ge 2 ] || rows=24
+[ "$cols" -ge 2 ] || cols=80
+
+if ! T has-session -t "=$name" 2>/dev/null; then
+    # New session: no history to replay; size it to this terminal up front.
+    # (Replaying an EMPTY history would inject one stray blank line, hence
+    # the history_size>0 guard below on the existing-session path.)
+    T new-session -d -s "$name" -x "$cols" -y "$rows"
+    exec tmux -L "$SOCK" -f "$CONF" attach-session -t "=$name"
+fi
+
+# One attached client per session: kick any stale client (window-size latest
+# then tracks *this* terminal deterministically).
+T detach-client -s "=$name" 2>/dev/null || true
+
+# Resize the window to THIS terminal *before* capturing, so history has
+# already reflowed and the attach repaint will not shuffle lines across the
+# history/screen boundary (a taller client pops lines back out of history =
+# duplicated seam lines; a shorter one pushes screen lines into history =
+# lines missing from native scrollback).  resize-window flips window-size to
+# 'manual' (documented behaviour), so restore 'latest' afterwards or live
+# window resizes would stop tracking the client.
+# NOTE: pane-targeted commands need "=$name:" — a bare "=$name" is a valid
+# *session* target but silently resolves to nothing as a *pane* target.
+T resize-window -t "=$name:" -x "$cols" -y "$rows" 2>/dev/null || true
+T set-option -w -t "=$name:" window-size latest
+
+hist=$(T display-message -p -t "=$name:" '#{history_size}')
+if [ "${hist:-0}" -gt 0 ]; then
+    # Replay ONLY the scrolled-off history (lines -hist .. -1).  The visible
+    # screen (lines 0..height-1) is NOT replayed: tmux repaints it on attach,
+    # so replaying it too would duplicate a screenful ('-E -' would do that;
+    # '-E -1' stops at the last scrolled-off line).
+    #   -p stdout   -e SGR colors   -J join wrapped lines (implies -T),
+    #                                  so the terminal re-wraps at its own width
+    # capture-pane stores plain cells+attributes, so the replay can contain
+    # only text and SGR sequences — never mouse/alt-screen/etc., even if a
+    # TUI ran in the session.
+    T capture-pane -p -e -J -t "=$name:" -S - -E -1
+    printf '\033[0m\033[2m%s attached: %s; history above %s\033[0m\n' '───' "$name" '───'
+    # tmux clears the visible screen at attach (\e[H\e[2J), which ERASES it
+    # rather than scrolling it out.  Push the whole replay into scrollback
+    # first so nothing is lost; net cost after the attach repaint is a single
+    # blank seam line.
+    printf '\n%.0s' $(seq 1 "$rows")
+fi
+
+exec tmux -L "$SOCK" -f "$CONF" attach-session -t "=$name"

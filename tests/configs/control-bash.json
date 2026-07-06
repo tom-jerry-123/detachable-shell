@@ -1,0 +1,6 @@
+{
+  "name": "control-bash",
+  "new_or_attach_cmd": "bash -i",
+  "pre": "",
+  "post": ""
+}

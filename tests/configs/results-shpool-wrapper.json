@@ -1,0 +1,122 @@
+{
+  "harness_version": "1.0",
+  "tool": "shpool-wrapper",
+  "run_id": "spfe5817",
+  "config": {
+    "name": "shpool-wrapper",
+    "new_or_attach_cmd": "env SHPOOL_RUN_DIR=/tmp/shpool-wrap-{run_id} /home/jerry/Workspace/literature-review/session-spec-solutions/alternatives/shpool/att-shpool {session}",
+    "pre": "rm -rf /tmp/shpool-wrap-{run_id}",
+    "post": "d=/tmp/shpool-wrap-{run_id}; if [ -f \"$d/daemonized-shpool.pid\" ]; then kill \"$(cat \"$d/daemonized-shpool.pid\")\" 2>/dev/null; fi; sleep 1; rm -rf \"$d\"; true"
+  },
+  "started": "2026-07-05T21:55:26-0700",
+  "pty": {
+    "cols": 120,
+    "rows": 32,
+    "term": "xterm-256color"
+  },
+  "tests": {
+    "T1": {
+      "pass": true,
+      "bytes_scanned": 22818,
+      "clients_scanned": 12,
+      "violations": [],
+      "detail": "22818 bytes over 12 clients scanned; 0 forbidden mouse/alt-screen enable sequences"
+    },
+    "T2": {
+      "pass": true,
+      "distinct_markers": 200,
+      "required": 190,
+      "ascending_first_occurrence": true,
+      "scrollback_erase_after_replay": false,
+      "detail": "200/200 distinct markers replayed to fresh client, ascending=True, ED3-after-replay=False"
+    },
+    "T3": {
+      "pass": true,
+      "counter_pid": 1517277,
+      "started_counting": true,
+      "pid_alive_after_client_kill": true,
+      "count_before_kill": 1,
+      "count_after_kill": [
+        17,
+        24
+      ],
+      "still_advancing": true,
+      "interactive_after_reattach": true,
+      "shell_pid_before_kill": 1517166,
+      "shell_pid_after_reattach": 1517166,
+      "same_shell_after_reattach": true,
+      "detail": "counter pid 1517277 alive=True advancing=True reattach-interactive=True same-shell=True ($$ 1517166 -> 1517166)"
+    },
+    "T4": {
+      "pass": true,
+      "violations": [],
+      "sessions": [
+        "spfe5817-S1",
+        "spfe5817-S2",
+        "spfe5817-S3",
+        "spfe5817-S4",
+        "spfe5817-S5"
+      ],
+      "concurrently_interactive": 5,
+      "detail": "5/5 sessions concurrently interactive, 0 isolation violations"
+    },
+    "T5": {
+      "pass": true,
+      "contexts": [
+        {
+          "context": "initial-attach-S1",
+          "client": "T2-A-S1",
+          "pass": true,
+          "token": "PING-f389ca95"
+        },
+        {
+          "context": "reattach-S1-after-abrupt-kill",
+          "client": "T2-B-S1",
+          "pass": true,
+          "token": "PING-6c2c2465"
+        },
+        {
+          "context": "reattach-S1-after-T3-kill",
+          "client": "T3-C-S1",
+          "pass": true,
+          "token": "PING-7e1fed79"
+        },
+        {
+          "context": "concurrent-reattach-S1",
+          "client": "T4-re-S1",
+          "pass": true,
+          "token": "PING-ac98528a"
+        },
+        {
+          "context": "concurrent-reattach-S2",
+          "client": "T4-re-S2",
+          "pass": true,
+          "token": "PING-935087fa"
+        },
+        {
+          "context": "concurrent-reattach-S3",
+          "client": "T4-re-S3",
+          "pass": true,
+          "token": "PING-9691dbf4"
+        },
+        {
+          "context": "concurrent-reattach-S4",
+          "client": "T4-re-S4",
+          "pass": true,
+          "token": "PING-7924049e"
+        },
+        {
+          "context": "concurrent-reattach-S5",
+          "client": "T4-re-S5",
+          "pass": true,
+          "token": "PING-dd571fc2"
+        }
+      ],
+      "detail": "8/8 attach contexts answered within 5s after stray-byte burst"
+    }
+  },
+  "pre_exit": 0,
+  "post_exit": 0,
+  "all_pass": true,
+  "finished": "2026-07-05T21:55:52-0700"
+}

@@ -1,0 +1,122 @@
+{
+  "harness_version": "1.0",
+  "tool": "shpool-alt",
+  "run_id": "spa66e6d",
+  "config": {
+    "name": "shpool-alt",
+    "new_or_attach_cmd": "env XDG_RUNTIME_DIR=/tmp/shpool-spec-test /home/jerry/.cargo/bin/shpool --config-file /home/jerry/Workspace/literature-review/session-spec-solutions/alternatives/shpool/config.toml attach -f {session}",
+    "pre": "mkdir -p /tmp/shpool-spec-test && (env XDG_RUNTIME_DIR=/tmp/shpool-spec-test nohup /home/jerry/.cargo/bin/shpool --config-file /home/jerry/Workspace/literature-review/session-spec-solutions/alternatives/shpool/config.toml daemon > /tmp/shpool-spec-test/daemon.log 2>&1 & ); sleep 2",
+    "post": "pkill -f 'shpool.*daemon' 2>/dev/null; rm -rf /tmp/shpool-spec-test; true"
+  },
+  "started": "2026-07-05T21:56:42-0700",
+  "pty": {
+    "cols": 120,
+    "rows": 32,
+    "term": "xterm-256color"
+  },
+  "tests": {
+    "T1": {
+      "pass": true,
+      "bytes_scanned": 22818,
+      "clients_scanned": 12,
+      "violations": [],
+      "detail": "22818 bytes over 12 clients scanned; 0 forbidden mouse/alt-screen enable sequences"
+    },
+    "T2": {
+      "pass": true,
+      "distinct_markers": 200,
+      "required": 190,
+      "ascending_first_occurrence": true,
+      "scrollback_erase_after_replay": false,
+      "detail": "200/200 distinct markers replayed to fresh client, ascending=True, ED3-after-replay=False"
+    },
+    "T3": {
+      "pass": true,
+      "counter_pid": 1518800,
+      "started_counting": true,
+      "pid_alive_after_client_kill": true,
+      "count_before_kill": 1,
+      "count_after_kill": [
+        17,
+        24
+      ],
+      "still_advancing": true,
+      "interactive_after_reattach": true,
+      "shell_pid_before_kill": 1518703,
+      "shell_pid_after_reattach": 1518703,
+      "same_shell_after_reattach": true,
+      "detail": "counter pid 1518800 alive=True advancing=True reattach-interactive=True same-shell=True ($$ 1518703 -> 1518703)"
+    },
+    "T4": {
+      "pass": true,
+      "violations": [],
+      "sessions": [
+        "spa66e6d-S1",
+        "spa66e6d-S2",
+        "spa66e6d-S3",
+        "spa66e6d-S4",
+        "spa66e6d-S5"
+      ],
+      "concurrently_interactive": 5,
+      "detail": "5/5 sessions concurrently interactive, 0 isolation violations"
+    },
+    "T5": {
+      "pass": true,
+      "contexts": [
+        {
+          "context": "initial-attach-S1",
+          "client": "T2-A-S1",
+          "pass": true,
+          "token": "PING-2be80391"
+        },
+        {
+          "context": "reattach-S1-after-abrupt-kill",
+          "client": "T2-B-S1",
+          "pass": true,
+          "token": "PING-72c833e4"
+        },
+        {
+          "context": "reattach-S1-after-T3-kill",
+          "client": "T3-C-S1",
+          "pass": true,
+          "token": "PING-25a5cbeb"
+        },
+        {
+          "context": "concurrent-reattach-S1",
+          "client": "T4-re-S1",
+          "pass": true,
+          "token": "PING-6aca66a8"
+        },
+        {
+          "context": "concurrent-reattach-S2",
+          "client": "T4-re-S2",
+          "pass": true,
+          "token": "PING-7cfdab1a"
+        },
+        {
+          "context": "concurrent-reattach-S3",
+          "client": "T4-re-S3",
+          "pass": true,
+          "token": "PING-45bb9e25"
+        },
+        {
+          "context": "concurrent-reattach-S4",
+          "client": "T4-re-S4",
+          "pass": true,
+          "token": "PING-4f588d6c"
+        },
+        {
+          "context": "concurrent-reattach-S5",
+          "client": "T4-re-S5",
+          "pass": true,
+          "token": "PING-fb261bd1"
+        }
+      ],
+      "detail": "8/8 attach contexts answered within 5s after stray-byte burst"
+    }
+  },
+  "pre_exit": 0,
+  "post_exit": 15,
+  "all_pass": true,
+  "finished": "2026-07-05T21:57:10-0700"
+}

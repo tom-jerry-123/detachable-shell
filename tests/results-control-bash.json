@@ -1,0 +1,120 @@
+{
+  "harness_version": "1.0",
+  "tool": "control-bash",
+  "run_id": "spba9814",
+  "config": {
+    "name": "control-bash",
+    "new_or_attach_cmd": "bash -i",
+    "pre": "",
+    "post": ""
+  },
+  "started": "2026-07-05T21:19:04-0700",
+  "pty": {
+    "cols": 120,
+    "rows": 32,
+    "term": "xterm-256color"
+  },
+  "tests": {
+    "T1": {
+      "pass": true,
+      "bytes_scanned": 19185,
+      "clients_scanned": 12,
+      "violations": [],
+      "detail": "19185 bytes over 12 clients scanned; 0 forbidden mouse/alt-screen enable sequences"
+    },
+    "T2": {
+      "pass": false,
+      "distinct_markers": 0,
+      "required": 190,
+      "ascending_first_occurrence": true,
+      "scrollback_erase_after_replay": false,
+      "detail": "0/200 distinct markers replayed to fresh client, ascending=True, ED3-after-replay=False"
+    },
+    "T3": {
+      "pass": false,
+      "counter_pid": 1482119,
+      "started_counting": true,
+      "pid_alive_after_client_kill": true,
+      "count_before_kill": 1,
+      "count_after_kill": [
+        17,
+        24
+      ],
+      "still_advancing": true,
+      "interactive_after_reattach": true,
+      "shell_pid_before_kill": 1481988,
+      "shell_pid_after_reattach": 1482182,
+      "same_shell_after_reattach": false,
+      "detail": "counter pid 1482119 alive=True advancing=True reattach-interactive=True same-shell=False ($$ 1481988 -> 1482182)"
+    },
+    "T4": {
+      "pass": true,
+      "violations": [],
+      "sessions": [
+        "spba9814-S1",
+        "spba9814-S2",
+        "spba9814-S3",
+        "spba9814-S4",
+        "spba9814-S5"
+      ],
+      "concurrently_interactive": 5,
+      "detail": "5/5 sessions concurrently interactive, 0 isolation violations"
+    },
+    "T5": {
+      "pass": true,
+      "contexts": [
+        {
+          "context": "initial-attach-S1",
+          "client": "T2-A-S1",
+          "pass": true,
+          "token": "PING-89e224a3"
+        },
+        {
+          "context": "reattach-S1-after-abrupt-kill",
+          "client": "T2-B-S1",
+          "pass": true,
+          "token": "PING-3df7a839"
+        },
+        {
+          "context": "reattach-S1-after-T3-kill",
+          "client": "T3-C-S1",
+          "pass": true,
+          "token": "PING-2c8c0de9"
+        },
+        {
+          "context": "concurrent-reattach-S1",
+          "client": "T4-re-S1",
+          "pass": true,
+          "token": "PING-9879ea86"
+        },
+        {
+          "context": "concurrent-reattach-S2",
+          "client": "T4-re-S2",
+          "pass": true,
+          "token": "PING-37801116"
+        },
+        {
+          "context": "concurrent-reattach-S3",
+          "client": "T4-re-S3",
+          "pass": true,
+          "token": "PING-967f6e72"
+        },
+        {
+          "context": "concurrent-reattach-S4",
+          "client": "T4-re-S4",
+          "pass": true,
+          "token": "PING-81368881"
+        },
+        {
+          "context": "concurrent-reattach-S5",
+          "client": "T4-re-S5",
+          "pass": true,
+          "token": "PING-814042bd"
+        }
+      ],
+      "detail": "8/8 attach contexts answered within 5s after stray-byte burst"
+    }
+  },
+  "all_pass": false,
+  "finished": "2026-07-05T21:19:35-0700"
+}

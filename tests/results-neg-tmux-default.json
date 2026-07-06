@@ -1,0 +1,252 @@
+{
+  "harness_version": "1.0",
+  "tool": "neg-tmux-default",
+  "run_id": "sp019c0b",
+  "config": {
+    "name": "neg-tmux-default",
+    "new_or_attach_cmd": "tmux -L spec-harness-neg -f /dev/null new-session -A -s {session}",
+    "post": "tmux -L spec-harness-neg kill-server 2>/dev/null || true"
+  },
+  "started": "2026-07-05T21:17:26-0700",
+  "pty": {
+    "cols": 120,
+    "rows": 32,
+    "term": "xterm-256color"
+  },
+  "tests": {
+    "T1": {
+      "pass": false,
+      "bytes_scanned": 44621,
+      "clients_scanned": 12,
+      "violations": [
+        {
+          "client": "T2-A-S1",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T2-B-S1",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T3-C-S1",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-first-S2",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-first-S3",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-first-S4",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-first-S5",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-re-S1",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-re-S2",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-re-S3",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-re-S4",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        },
+        {
+          "client": "T4-re-S5",
+          "offset": 0,
+          "sequence": "ESC[?1049h",
+          "forbidden_params": [
+            {
+              "param": 1049,
+              "meaning": "alternate screen + save cursor"
+            }
+          ]
+        }
+      ],
+      "detail": "44621 bytes over 12 clients scanned; 12 forbidden mouse/alt-screen enable sequences"
+    },
+    "T2": {
+      "pass": false,
+      "distinct_markers": 29,
+      "required": 190,
+      "ascending_first_occurrence": true,
+      "detail": "29/200 distinct markers replayed to fresh client, ascending=True"
+    },
+    "T3": {
+      "pass": true,
+      "counter_pid": 1477952,
+      "started_counting": true,
+      "pid_alive_after_client_kill": true,
+      "count_before_kill": 1,
+      "count_after_kill": [
+        17,
+        24
+      ],
+      "still_advancing": true,
+      "interactive_after_reattach": true,
+      "shell_pid_before_kill": 1477836,
+      "shell_pid_after_reattach": 1477836,
+      "same_shell_after_reattach": true,
+      "detail": "counter pid 1477952 alive=True advancing=True reattach-interactive=True same-shell=True ($$ 1477836 -> 1477836)"
+    },
+    "T4": {
+      "pass": true,
+      "violations": [],
+      "sessions": [
+        "sp019c0b-S1",
+        "sp019c0b-S2",
+        "sp019c0b-S3",
+        "sp019c0b-S4",
+        "sp019c0b-S5"
+      ],
+      "concurrently_interactive": 5,
+      "detail": "5/5 sessions concurrently interactive, 0 isolation violations"
+    },
+    "T5": {
+      "pass": true,
+      "contexts": [
+        {
+          "context": "initial-attach-S1",
+          "client": "T2-A-S1",
+          "pass": true,
+          "token": "PING-af0003ee"
+        },
+        {
+          "context": "reattach-S1-after-abrupt-kill",
+          "client": "T2-B-S1",
+          "pass": true,
+          "token": "PING-7581ee09"
+        },
+        {
+          "context": "reattach-S1-after-T3-kill",
+          "client": "T3-C-S1",
+          "pass": true,
+          "token": "PING-31c71cd6"
+        },
+        {
+          "context": "concurrent-reattach-S1",
+          "client": "T4-re-S1",
+          "pass": true,
+          "token": "PING-4c8eed0e"
+        },
+        {
+          "context": "concurrent-reattach-S2",
+          "client": "T4-re-S2",
+          "pass": true,
+          "token": "PING-1fff2080"
+        },
+        {
+          "context": "concurrent-reattach-S3",
+          "client": "T4-re-S3",
+          "pass": true,
+          "token": "PING-a33342a5"
+        },
+        {
+          "context": "concurrent-reattach-S4",
+          "client": "T4-re-S4",
+          "pass": true,
+          "token": "PING-47634dfc"
+        },
+        {
+          "context": "concurrent-reattach-S5",
+          "client": "T4-re-S5",
+          "pass": true,
+          "token": "PING-ed63077b"
+        }
+      ],
+      "detail": "8/8 attach contexts answered within 5s after stray-byte burst"
+    }
+  },
+  "post_exit": 0,
+  "all_pass": false,
+  "finished": "2026-07-05T21:17:52-0700"
+}

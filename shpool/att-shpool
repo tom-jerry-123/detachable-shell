@@ -1,0 +1,25 @@
+#!/bin/sh
+# att-shpool — single entry point for persistent shpool sessions.
+#   att-shpool                 list sessions
+#   att-shpool ls              list sessions
+#   att-shpool <name>          attach or create session <name>  (Ctrl-q detaches)
+#   att-shpool attach <name>   same, for sessions named like a subcommand
+#   att-shpool kill <name>...  kill session(s)
+#   att-shpool detach [name]   detach the client attached to <name>
+set -eu
+DIR=$(CDPATH= cd -- "$(dirname -- "$(readlink -f "$0")")" && pwd)
+BIN="${SHPOOL_BIN:-$HOME/.cargo/bin/shpool}"
+RUN="${SHPOOL_RUN_DIR:-$HOME/.local/run/shpool}"
+mkdir -p "$RUN"
+SP() { "$BIN" --config-file "$DIR/config.toml" --socket "$RUN/shpool.socket" "$@"; }
+attach() { exec "$BIN" --daemonize --config-file "$DIR/config.toml" \
+                --socket "$RUN/shpool.socket" attach -f "$1"; }
+cmd=${1:-ls}
+case "$cmd" in
+    ls|list)          SP list 2>/dev/null || echo "no sessions (daemon not running)";;
+    kill)             shift; SP kill "$@" && echo "killed: $*";;
+    detach)           shift; SP detach "$@";;
+    attach)           shift; attach "$1";;
+    -h|--help|help)   sed -n '3,8p' "$0";;
+    *)                attach "$cmd";;
+esac
