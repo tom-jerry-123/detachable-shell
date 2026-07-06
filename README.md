@@ -16,7 +16,8 @@ can run side by side):
 | Replay depth | up to 100,000 lines | up to 10,000 lines (config) |
 | Implementation | `tmux/` | `shpool/` |
 
-Full requirements, test evidence, and the head-to-head comparison: `REPORT.md`.
+Design decisions and requirements: `WHY.md`. Test evidence and the
+head-to-head comparison: `REPORT.md`.
 
 ## Setup
 

@@ -1,7 +1,7 @@
 # Test harness for the persistent-terminal-session spec
 
 Automated, human-free compliance testing of a session-persistence tool against
-`terminal-session-spec.md` (R1–R5). Python 3 stdlib only, no root, no pip.
+the project spec in `WHY.md` (requirements R1–R5). Python 3 stdlib only, no root, no pip.
 
 The harness simulates a terminal-emulator client: it spawns the tool's attach
 command inside a fresh pty (120x32, `TERM=xterm-256color`), types bytes into

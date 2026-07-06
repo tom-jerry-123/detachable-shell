@@ -2,7 +2,7 @@
 
 [shpool](https://crates.io/crates/shpool) 0.11.0 (`~/.cargo/bin/shpool`,
 installed from crates.io) configured as a **pure persistence layer** per
-`terminal-session-spec.md`. With the config in this directory it passes all
+the project spec in `WHY.md`. With the config in this directory it passes all
 five harness tests (`tests/harness.py`), both when the daemon is
 pre-started (`tests/configs/shpool-alt.json`) and via the auto-daemonizing
 wrapper (`tests/configs/shpool-wrapper.json`).

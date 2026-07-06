@@ -1,6 +1,6 @@
 # Persistent Terminal Sessions — Final Report
 
-Spec: `terminal-session-spec.md` (R1–R5). Two working candidates were built and tested with the
+Spec: the project spec in `WHY.md` (requirements R1–R5). Two working candidates were built and tested with the
 automated acceptance harness (`tests/harness.py`, 5 tests T1–T5; see `tests/README.md`).
 
 **Adopt `tmux-branch/att` (tmux 3.4 on a private socket + replay-on-attach).** Details below.

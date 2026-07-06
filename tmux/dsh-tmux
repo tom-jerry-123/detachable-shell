@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# dsh-tmux <name> — attach-or-create a persistent named session (terminal-session-spec).
+# dsh-tmux <name> — attach-or-create a persistent named session (see WHY.md at the project root).
 #
 # tmux runs on a PRIVATE socket (-L jerryspec) with native.tmux.conf (normal
 # screen, no modes, no bindings, mouse off).  Before attaching to an EXISTING

@@ -1,6 +1,6 @@
 # tmux — persistent sessions with fully native terminal UX
 
-Implements `terminal-session-spec.md` (R1–R5) with stock tmux 3.4 on a
+Implements the project spec in `WHY.md` (requirements R1–R5) with stock tmux 3.4 on a
 **private socket** plus a replay-on-attach wrapper. tmux is reduced to a pure
 persistence layer: no prefix key, no bindings, no mouse mode, no status bar,
 no alternate screen. Selection, copy/paste, and wheel-scrolling are 100%

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 harness.py — automated spec-compliance harness for persistent-terminal-session
-tools (see ../../terminal-session-spec.md).
+tools (see WHY.md at the project root).
 
 The harness simulates a terminal-emulator client: it spawns the target tool's
 attach command inside a fresh pty (120x32, TERM=xterm-256color), types bytes
