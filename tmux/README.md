@@ -1,4 +1,4 @@
-# tmux-branch — persistent sessions with fully native terminal UX
+# tmux — persistent sessions with fully native terminal UX
 
 Implements `terminal-session-spec.md` (R1–R5) with stock tmux 3.4 on a
 **private socket** plus a replay-on-attach wrapper. tmux is reduced to a pure
@@ -12,12 +12,12 @@ scrollback** (R4), then attaches.
 
 - `native.tmux.conf` — server config. Only ever loaded on the private
   socket `jerryspec`. Never load it into the default tmux server.
-- `att` — executable attach-or-create wrapper.
+- `dsh-tmux` — executable attach-or-create wrapper.
 
 ## Usage
 
 ```sh
-ATT=/home/jerry/Workspace/literature-review/session-spec-solutions/tmux-branch/att
+ATT=/home/jerry/Tools/detachable-shell/tmux/dsh-tmux
 
 $ATT work        # create-or-attach session "work" on private socket jerryspec
 $ATT             # list sessions on the socket
@@ -28,21 +28,21 @@ yourself if you want it):
 
 ```sh
 mkdir -p ~/bin
-ln -s /home/jerry/Workspace/literature-review/session-spec-solutions/tmux-branch/att ~/bin/att
+ln -s /home/jerry/Tools/detachable-shell/tmux/dsh-tmux ~/bin/dsh-tmux
 # ensure ~/bin is on PATH (it is by default on Ubuntu when it exists)
 ```
 
 Day-to-day:
 
-- **Open a session:** `att paper1` in a terminal tab. Five tabs with five
+- **Open a session:** `dsh-tmux paper1` in a terminal tab. Five tabs with five
   names = five concurrent sessions (R5). Session names: anything tmux
   accepts (avoid `.` and `:`).
 - **Detach:** just close the tab / kill the SSH connection. There is no
   detach key (there are no keys at all — every keystroke reaches your
   program, R2). The session keeps running (R1).
-- **Reattach:** `att paper1` from any terminal. If a stale client is still
-  attached, `att` kicks it first (exactly one client per session). Before
-  attaching, `att` resizes the session to your current terminal, prints the
+- **Reattach:** `dsh-tmux paper1` from any terminal. If a stale client is still
+  attached, `dsh-tmux` kicks it first (exactly one client per session). Before
+  attaching, `dsh-tmux` resizes the session to your current terminal, prints the
   entire scrolled-off history (with colors) followed by a dim
   `─── attached: NAME; history above ───` marker line, then attaches.
   Wheel-scroll up = your terminal's own scrollback containing the full
@@ -52,12 +52,12 @@ Day-to-day:
   The server exits by itself when the last session ends (`exit-empty on`).
 
 Environment overrides: `ATT_SOCKET` (socket name, default `jerryspec`),
-`ATT_CONF` (config path, default `native.tmux.conf` next to `att`).
+`ATT_CONF` (config path, default `native.tmux.conf` next to `dsh-tmux`).
 
 ## What to expect at attach (cosmetics)
 
 - One blank seam line between replayed history and the repainted live
-  screen. This is the residue of a screenful of padding `att` emits so that
+  screen. This is the residue of a screenful of padding `dsh-tmux` emits so that
   tmux's attach-time clear (`\e[H\e[2J`, which erases rather than scrolls)
   cannot destroy the tail of the replay.
 - A TUI's history (e.g. Claude Code) replays as periodic snapshots of lines
@@ -79,7 +79,7 @@ Environment overrides: `ATT_SOCKET` (socket name, default `jerryspec`),
   `\e[?1049h`/`\e[?47h`, no mouse-enable, no `\e[3J`.
 - `history-limit 100000`: applies to panes created after server start on
   this socket — the replay source. A 100k-line capture measures ~0.17 s.
-- `att` resizes the window to the *current* terminal **before** capturing
+- `dsh-tmux` resizes the window to the *current* terminal **before** capturing
   (a size mismatch at attach shuffles lines across the history/screen
   boundary: taller client = duplicated lines, shorter = lost lines), then
   restores `window-size latest` (resize-window flips it to `manual`).
@@ -94,7 +94,7 @@ Environment overrides: `ATT_SOCKET` (socket name, default `jerryspec`),
 
 Everything lives on the private socket `jerryspec`
 (`tmux -L jerryspec ...`). The default tmux server — where your 5 existing
-live sessions run — is never touched by `att` or by this config. Do not run
+live sessions run — is never touched by `dsh-tmux` or by this config. Do not run
 `tmux source-file native.tmux.conf` inside the default server: `unbind-key
 -a` and `prefix None` would take your bindings away there.
 
@@ -116,7 +116,7 @@ in its Claude Code task:
 2. Cleanly stop the program in the old session and exit its shell (or
    `tmux kill-session -t OLDNAME` on the default socket once you're sure).
 
-3. Start the replacement: `att OLDNAME`, then relaunch the program inside.
+3. Start the replacement: `dsh-tmux OLDNAME`, then relaunch the program inside.
    (You can `cat ~/oldname-history.txt` first if you want the salvaged
    history in the new terminal's scrollback.)
 
@@ -130,8 +130,8 @@ Acceptance harness (5 tests: no-alt-screen/no-mouse-enable byte contract,
 input transparency, multi-session):
 
 ```sh
-python3 /home/jerry/Workspace/literature-review/session-spec-solutions/tests/harness.py \
-  /home/jerry/Workspace/literature-review/session-spec-solutions/tests/configs/tmux-branch.json
+python3 /home/jerry/Tools/detachable-shell/tests/harness.py \
+  /home/jerry/Tools/detachable-shell/tests/configs/tmux-branch.json
 ```
 
 Latest run: see `tests/results-tmux-branch.json`.

@@ -10,31 +10,30 @@ drag-select old output, and Ctrl+Shift+C it, hours or days later.
 Two independent, equivalently verified implementations (pick either; both
 can run side by side):
 
-| | `att` (tmux-based) | `att-shpool` (shpool-based) |
+| | `dsh-tmux` (tmux-based) | `dsh-shpool` (shpool-based) |
 |---|---|---|
 | Engine | stock tmux 3.4 on a private socket, tamed by config + wrapper | [shpool](https://github.com/shell-pool/shpool) 0.11 (persistence-only, never owns the screen) |
 | Replay depth | up to 100,000 lines | up to 10,000 lines (config) |
-| Implementation | `tmux-branch/` | `alternatives/shpool/` |
+| Implementation | `tmux/` | `shpool/` |
 
-Full requirements, test evidence, and the head-to-head comparison:
-`terminal-session-spec.md` and `REPORT.md`.
+Full requirements, test evidence, and the head-to-head comparison: `REPORT.md`.
 
 ## Setup
 
-1. Dependencies: `tmux` ≥ 3.2 (for `att`); `shpool` binary (for `att-shpool`),
+1. Dependencies: `tmux` ≥ 3.2 (for `dsh-tmux`); `shpool` binary (for `dsh-shpool`),
    e.g. `cargo install shpool --locked` (no root needed).
 2. Put the two entry points on your PATH (self-relative — they find their own
    configs, so only these pointers matter):
 
    ```sh
    mkdir -p ~/bin
-   cat > ~/bin/att <<EOF
+   cat > ~/bin/dsh-tmux <<EOF
    #!/usr/bin/env bash
    export ATT_SOCKET="\${ATT_SOCKET:-persist}"
-   exec $(pwd)/tmux-branch/att "\$@"
+   exec $(pwd)/tmux/dsh-tmux "\$@"
    EOF
-   chmod +x ~/bin/att
-   ln -sf "$(pwd)/alternatives/shpool/att-shpool" ~/bin/att-shpool
+   chmod +x ~/bin/dsh-tmux
+   ln -sf "$(pwd)/shpool/dsh-shpool" ~/bin/dsh-shpool
    ```
 
    (Run from this directory. `~/bin` is on PATH from the next login on Ubuntu.)
@@ -42,15 +41,15 @@ Full requirements, test evidence, and the head-to-head comparison:
 ## Usage — identical grammar for both commands
 
 ```
-att                    att-shpool                 list sessions
-att work               att-shpool work            attach or create "work"
+dsh-tmux                    dsh-shpool                 list sessions
+dsh-tmux work               dsh-shpool work            attach or create "work"
 Ctrl-q                 Ctrl-q                     detach (from inside)
-att detach [work]      att-shpool detach [work]   detach a client remotely
-att kill work          att-shpool kill work       kill session(s)
-att attach kill        att-shpool attach kill     attach a session named like a subcommand
+dsh-tmux detach [work]      dsh-shpool detach [work]   detach a client remotely
+dsh-tmux kill work          dsh-shpool kill work       kill session(s)
+dsh-tmux attach kill        dsh-shpool attach kill     attach a session named like a subcommand
 ```
 
-Daily rhythm: one session per terminal tab (`att work`). Detach by pressing
+Daily rhythm: one session per terminal tab (`dsh-tmux work`). Detach by pressing
 Ctrl-q **or just closing the tab / dropping SSH** — sessions shrug off
 hang-ups. Reattach later with the same command; scroll up: your history is
 there, natively. End a session with `exit` inside it.
@@ -66,21 +65,21 @@ alternate-screen escape sequences to your terminal, so the terminal retains
 native selection/scroll/copy *by construction*, and they replay stored
 session history as plain text on attach so it lands in real scrollback.
 
-- **`att`**: tmux runs with `mouse off`, zero key bindings (except Ctrl-q →
+- **`dsh-tmux`**: tmux runs with `mouse off`, zero key bindings (except Ctrl-q →
   detach), no status bar, and with the alternate-screen capability stripped,
   so it paints on the normal screen. The wrapper replays scrolled-off pane
   history via `capture-pane` before attaching (visible screen excluded — no
   duplication; one blank seam line marks the boundary).
-- **`att-shpool`**: shpool is a transparent byte pipe with a per-user daemon
+- **`dsh-shpool`**: shpool is a transparent byte pipe with a per-user daemon
   (auto-started by the wrapper, socket at `~/.local/run/shpool/`). Config
-  (`alternatives/shpool/config.toml`): `session_restore_mode = lines(10000)`,
+  (`shpool/config.toml`): `session_restore_mode = lines(10000)`,
   single-key Ctrl-q detach (no chord latching), silent attach.
 
 ## Caveats (honest list)
 
 - Sessions die on server reboot, and (shpool) if the daemon is killed —
   optional hardening: systemd *user* unit with `Restart=on-failure`
-  (template in `alternatives/shpool/README.md`).
+  (template in `shpool/README.md`).
 - One attached client per session; attaching kicks a stale client.
 - Ctrl-q never reaches programs inside sessions (it's the detach key).
 - tmux: history that scrolled off before a session was created on this

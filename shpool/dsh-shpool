@@ -1,11 +1,11 @@
 #!/bin/sh
-# att-shpool — single entry point for persistent shpool sessions.
-#   att-shpool                 list sessions
-#   att-shpool ls              list sessions
-#   att-shpool <name>          attach or create session <name>  (Ctrl-q detaches)
-#   att-shpool attach <name>   same, for sessions named like a subcommand
-#   att-shpool kill <name>...  kill session(s)
-#   att-shpool detach [name]   detach the client attached to <name>
+# dsh-shpool — single entry point for persistent shpool sessions.
+#   dsh-shpool                 list sessions
+#   dsh-shpool ls              list sessions
+#   dsh-shpool <name>          attach or create session <name>  (Ctrl-q detaches)
+#   dsh-shpool attach <name>   same, for sessions named like a subcommand
+#   dsh-shpool kill <name>...  kill session(s)
+#   dsh-shpool detach [name]   detach the client attached to <name>
 set -eu
 DIR=$(CDPATH= cd -- "$(dirname -- "$(readlink -f "$0")")" && pwd)
 BIN="${SHPOOL_BIN:-$HOME/.cargo/bin/shpool}"

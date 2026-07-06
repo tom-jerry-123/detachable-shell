@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# att <name> — attach-or-create a persistent named session (terminal-session-spec).
+# dsh-tmux <name> — attach-or-create a persistent named session (terminal-session-spec).
 #
 # tmux runs on a PRIVATE socket (-L jerryspec) with native.tmux.conf (normal
 # screen, no modes, no bindings, mouse off).  Before attaching to an EXISTING
@@ -8,8 +8,8 @@
 # The visible screen is never replayed (tmux repaints it on attach), so there
 # is no duplication.
 #
-#   att            list sessions on the private socket
-#   att work       create-or-attach session "work"
+#   dsh-tmux            list sessions on the private socket
+#   dsh-tmux work       create-or-attach session "work"
 #
 # Env overrides: ATT_SOCKET (socket name), ATT_CONF (config path).
 
@@ -30,7 +30,7 @@ fi
 name=$1
 
 if [ -n "${TMUX:-}" ]; then
-    echo "att: refusing to nest inside tmux" >&2
+    echo "dsh-tmux: refusing to nest inside tmux" >&2
     exit 1
 fi
 

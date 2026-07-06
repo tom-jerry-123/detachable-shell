@@ -1,6 +1,0 @@
-{
-  "name": "zmx-alt",
-  "new_or_attach_cmd": "env ZMX_DIR=/home/jerry/.zmx-spec-test /home/jerry/Workspace/literature-review/session-spec-solutions/alternatives/bin/zmx attach {session}",
-  "pre": "mkdir -p /home/jerry/.zmx-spec-test",
-  "post": "for i in 1 2 3 4 5; do env ZMX_DIR=/home/jerry/.zmx-spec-test /home/jerry/Workspace/literature-review/session-spec-solutions/alternatives/bin/zmx kill {run_id}-S$i --force; done; true"
-}

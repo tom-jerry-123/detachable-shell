@@ -11,7 +11,7 @@ wrapper (`tests/configs/shpool-wrapper.json`).
 
 ```sh
 # attach to (or create) a named session — one per terminal tab:
-alternatives/shpool/att-shpool work1
+dsh-shpool work1
 ```
 
 That is the whole interface. The wrapper:
@@ -87,7 +87,7 @@ the same name created a brand-new shell. Consequences:
 
 Recommended pattern on this box (no root):
 
-- **Default: the wrapper.** `att-shpool` lazily (re)starts the daemon on
+- **Default: the wrapper.** `dsh-shpool` lazily (re)starts the daemon on
   first attach after boot; no unit files needed. This is the configuration
   the harness validated end-to-end.
 - **Optional hardening:** `systemctl --user` works here, so a user unit
@@ -98,7 +98,7 @@ Recommended pattern on this box (no root):
   [Unit]
   Description=shpool session daemon
   [Service]
-  ExecStart=%h/.cargo/bin/shpool --config-file %h/Workspace/literature-review/session-spec-solutions/alternatives/shpool/config.toml --socket %h/.local/run/shpool/shpool.socket daemon
+  ExecStart=%h/.cargo/bin/shpool --config-file %h/Tools/detachable-shell/shpool/config.toml --socket %h/.local/run/shpool/shpool.socket daemon
   Restart=on-failure
   [Install]
   WantedBy=default.target
@@ -134,7 +134,7 @@ explicitly allowed by the byte contract.
 
 - `tests/configs/results-shpool-alt.json` — pre-started daemon, final
   config: T1–T5 PASS (fresh run 2026-07-05).
-- `tests/configs/results-shpool-wrapper.json` — `att-shpool` wrapper with
+- `tests/configs/results-shpool-wrapper.json` — `dsh-shpool` wrapper with
   auto-daemonize, final config: T1–T5 PASS (fresh run 2026-07-05).
 - Adversarial probes (isolated `XDG_RUNTIME_DIR`, 2026-07-05): TUI/color
   history replay at 80x24 after 120x32; CJK/emoji + 600-char lines at

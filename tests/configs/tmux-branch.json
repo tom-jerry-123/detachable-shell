@@ -1,6 +1,6 @@
 {
   "name": "tmux-branch",
-  "new_or_attach_cmd": "env ATT_SOCKET=jerryspec-harness /home/jerry/Workspace/literature-review/session-spec-solutions/tmux-branch/att {session}",
+  "new_or_attach_cmd": "env ATT_SOCKET=jerryspec-harness /home/jerry/Tools/detachable-shell/tmux/att {session}",
   "pre": "",
   "post": "tmux -L jerryspec-harness kill-server 2>/dev/null || true"
 }

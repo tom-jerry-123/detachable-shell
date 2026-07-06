@@ -1,6 +1,6 @@
 {
   "name": "shpool-alt",
-  "new_or_attach_cmd": "env XDG_RUNTIME_DIR=/tmp/shpool-spec-test /home/jerry/.cargo/bin/shpool --config-file /home/jerry/Workspace/literature-review/session-spec-solutions/alternatives/shpool/config.toml attach -f {session}",
-  "pre": "mkdir -p /tmp/shpool-spec-test && (env XDG_RUNTIME_DIR=/tmp/shpool-spec-test nohup /home/jerry/.cargo/bin/shpool --config-file /home/jerry/Workspace/literature-review/session-spec-solutions/alternatives/shpool/config.toml daemon > /tmp/shpool-spec-test/daemon.log 2>&1 & ); sleep 2",
+  "new_or_attach_cmd": "env XDG_RUNTIME_DIR=/tmp/shpool-spec-test /home/jerry/.cargo/bin/shpool --config-file /home/jerry/Tools/detachable-shell/shpool/config.toml attach -f {session}",
+  "pre": "mkdir -p /tmp/shpool-spec-test && (env XDG_RUNTIME_DIR=/tmp/shpool-spec-test nohup /home/jerry/.cargo/bin/shpool --config-file /home/jerry/Tools/detachable-shell/shpool/config.toml daemon > /tmp/shpool-spec-test/daemon.log 2>&1 & ); sleep 2",
   "post": "pkill -f 'shpool.*daemon' 2>/dev/null; rm -rf /tmp/shpool-spec-test; true"
 }

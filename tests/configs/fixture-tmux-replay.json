@@ -1,6 +1,6 @@
 {
   "name": "fixture-tmux-replay",
-  "new_or_attach_cmd": "/home/jerry/Workspace/literature-review/session-spec-solutions/tests/configs/fixture-tmux-replay-attach.sh {session}",
+  "new_or_attach_cmd": "/home/jerry/Tools/detachable-shell/tests/configs/fixture-tmux-replay-attach.sh {session}",
   "pre": "",
   "post": "tmux -L spec-harness-fixture kill-server 2>/dev/null || true"
 }
