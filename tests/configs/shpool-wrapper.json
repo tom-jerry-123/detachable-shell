@@ -1,6 +1,6 @@
 {
   "name": "shpool-wrapper",
-  "new_or_attach_cmd": "env SHPOOL_RUN_DIR=/tmp/shpool-wrap-{run_id} /home/jerry/Tools/detachable-shell/shpool/att-shpool {session}",
+  "new_or_attach_cmd": "env SHPOOL_RUN_DIR=/tmp/shpool-wrap-{run_id} /home/jerry/Tools/detachable-shell/shpool/dsh-shpool {session}",
   "pre": "rm -rf /tmp/shpool-wrap-{run_id}",
   "post": "d=/tmp/shpool-wrap-{run_id}; if [ -f \"$d/daemonized-shpool.pid\" ]; then kill \"$(cat \"$d/daemonized-shpool.pid\")\" 2>/dev/null; fi; sleep 1; rm -rf \"$d\"; true"
 }

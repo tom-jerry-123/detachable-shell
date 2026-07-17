@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
-# dsh-tmux <name> — attach-or-create a persistent named session (see WHY.md at the project root).
+# dsh-tmux — single entry point for persistent tmux sessions (see WHY.md at the project root).
+#   dsh-tmux                 list sessions
+#   dsh-tmux <name>          attach or create session <name>  (Ctrl-q detaches)
+#   dsh-tmux attach <name>   same, for sessions named like a subcommand
+#   dsh-tmux kill <name>...  kill session(s)
+#   dsh-tmux detach [name]   detach the client attached to <name>
 #
 # tmux runs on a PRIVATE socket (-L jerryspec) with native.tmux.conf (normal
 # screen, no modes, no bindings, mouse off).  Before attaching to an EXISTING
@@ -27,6 +32,38 @@ if [ $# -eq 0 ]; then
     T list-sessions 2>/dev/null || echo "no sessions on socket '$SOCK'"
     exit 0
 fi
+
+# Subcommands (README grammar). "attach <name>" exists so that sessions named
+# like a subcommand stay reachable; it falls through to the attach path below.
+case "$1" in
+    kill)
+        shift
+        [ $# -ge 1 ] || { echo "usage: dsh-tmux kill <name>..." >&2; exit 2; }
+        rc=0
+        for s in "$@"; do
+            if T kill-session -t "=$s" 2>/dev/null; then
+                echo "killed: $s"
+            else
+                echo "dsh-tmux: no session '$s' on socket '$SOCK'" >&2
+                rc=1
+            fi
+        done
+        exit "$rc"
+        ;;
+    detach)
+        shift
+        if [ $# -ge 1 ]; then T detach-client -s "=$1"; else T detach-client; fi
+        exit 0
+        ;;
+    attach)
+        shift
+        [ $# -ge 1 ] || { echo "usage: dsh-tmux attach <name>" >&2; exit 2; }
+        ;;
+    -h|--help|help)
+        sed -n '2,7p' "$0"
+        exit 0
+        ;;
+esac
 name=$1
 
 if [ -n "${TMUX:-}" ]; then

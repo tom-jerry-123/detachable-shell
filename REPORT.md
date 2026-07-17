@@ -3,20 +3,21 @@
 Spec: the project spec in `WHY.md` (requirements R1–R5). Two working candidates were built and tested with the
 automated acceptance harness (`tests/harness.py`, 5 tests T1–T5; see `tests/README.md`).
 
-**Adopt `tmux-branch/att` (tmux 3.4 on a private socket + replay-on-attach).** Details below.
+**Adopt `tmux/dsh-tmux` (tmux 3.4 on a private socket + replay-on-attach).** Details below.
 **Update 2026-07-05:** shpool was subsequently verified to the same adversarial standard and is an
 equally valid choice — see §6 (shpool addendum) for the head-to-head.
 
 ## 1. Requirements matrix
 
 Candidates:
-- **tmux-branch** — `tmux-branch/att` + `native.tmux.conf`, private socket `jerryspec`. Built,
+- **tmux-branch** — `tmux/dsh-tmux` + `native.tmux.conf`, private socket `jerryspec`. Built,
   harness-passed (exit 0, `tests/results-tmux-branch.json`), independently re-run and
   adversarially verified (verdict CONFIRMED: TUI-redraw + injected mouse/alt-screen escapes,
   unicode + 600-char wrapped lines, geometry changes — no gaming, no leaks).
 - **zmx** (alternatives) — third-party binary `alternatives/bin/zmx` v0.6.0 (ghostty-vt based)
-  + `zmx-attach` wrapper. Harness run 2026-07-05: all 5 tests PASS (exit 0,
-  `tests/results-zmx-alt.json`, config `tests/configs/zmx-alt.json`). One run only; **no**
+  + `zmx-attach` wrapper (rejected candidate; its binary/wrapper/config were not imported into
+  this repo — only the result log `tests/results-zmx-alt.json`). Harness run 2026-07-05: all 5
+  tests PASS (exit 0). One run only; **no**
   adversarial verification, no TUI/unicode stress, prebuilt binary of a young project.
 
 | Req | Meaning | tmux-branch | zmx |
@@ -27,9 +28,10 @@ Candidates:
 | R4 pre-attach history in native scrollback | ≥190/200 markers replayed as plain lines, ascending, no `ESC[3J` after | **PROVEN** (T2: 200/200; smoke: replay across 24x80→30x100 resize, 60/60) | **PROVEN** (T2: 200/200, no ED3) — but untested with TUI repaints/resizes |
 | R5 five named concurrent sessions | 5 sessions attach/kill/reattach + concurrent, zero cross-leaks | **PROVEN** (T4: 5/5 interactive, 0 isolation violations) | **PROVEN** (T4: 5/5, 0 violations) |
 
-Also on disk: `tmux/` is the researcher's earlier draft of the same approach — superseded by
-`tmux-branch` (which fixed a real bug: `stty size` returning `0 0` on a 0x0 pty made tmux abort
-with "width too small"; `att` now falls back to 24x80). Ignore `tmux/`; use `tmux-branch/`.
+Naming note: `tmux-branch` was later renamed to `tmux/` in this repo (and its entry point
+`att` to `dsh-tmux`); the researcher's earlier draft that previously occupied `tmux/` was
+removed. tmux-branch had fixed a real bug in that draft: `stty size` returning `0 0` on a
+0x0 pty made tmux abort with "width too small"; `dsh-tmux` falls back to 24x80.
 
 Spec candidates B–D were not built, per the spec's own analysis: B (VS Code persistent
 terminals) fails R1/R5 from GNOME Terminal; C (dtach/abduco) fails R4; D (mosh/ET) fails R1/R4.
@@ -66,14 +68,14 @@ fallback candidate — if you ever want it, verify it adversarially first and ac
 ### Day 1
 
 ```sh
-ATT=/home/jerry/Workspace/literature-review/session-spec-solutions/tmux-branch/att
+ATT=/home/jerry/Tools/detachable-shell/tmux/dsh-tmux
 $ATT work        # create-or-attach session "work" (private socket jerryspec)
 $ATT             # list sessions
-# optional: mkdir -p ~/bin && ln -s $ATT ~/bin/att   (~/bin is on PATH on Ubuntu)
+# optional: mkdir -p ~/bin && ln -s $ATT ~/bin/dsh-tmux   (~/bin is on PATH on Ubuntu)
 ```
 
 - One session per terminal tab; 5 tabs = 5 named sessions (R5).
-- Detach = just close the tab / drop SSH. Reattach with `att <name>` from anywhere; a stale
+- Detach = just close the tab / drop SSH. Reattach with `dsh-tmux <name>` from anywhere; a stale
   client is kicked, full pre-attach history is replayed into native scrollback, then attach.
 - End a session: `exit` inside it. Server exits itself when the last session ends.
 - Env overrides: `ATT_SOCKET` (default `jerryspec`), `ATT_CONF`.
@@ -89,15 +91,15 @@ default server is unsafe). Per session, at a natural break in its Claude Code ta
 tmux capture-pane -p -e -J -t OLDNAME -S - > ~/oldname-history.txt
 # 2. cleanly stop the program, exit the old session's shell
 #    (or: tmux kill-session -t OLDNAME   on the default socket, once sure)
-# 3. att OLDNAME       # then relaunch the program inside
+# 3. dsh-tmux OLDNAME   # then relaunch the program inside
 #    (optionally: cat ~/oldname-history.txt   first, to seed the new scrollback)
 ```
 
 ### Re-run acceptance tests anytime
 
 ```sh
-python3 /home/jerry/Workspace/literature-review/session-spec-solutions/tests/harness.py \
-  /home/jerry/Workspace/literature-review/session-spec-solutions/tests/configs/tmux-branch.json
+python3 /home/jerry/Tools/detachable-shell/tests/harness.py \
+  /home/jerry/Tools/detachable-shell/tests/configs/tmux-branch.json
 ```
 
 ## 4. Honest caveats
@@ -109,7 +111,7 @@ python3 /home/jerry/Workspace/literature-review/session-spec-solutions/tests/har
   (it breaks app-mouse-tracking forwarding, which this solution never requests). But a
   client-side regression in basic selection/scroll would hit a bare SSH shell identically
   and no server-side tool can fix it. Run the §2 checklist in VS Code once to confirm.
-- **Attach cosmetics** (documented in `tmux-branch/README.md`): one blank seam line at the
+- **Attach cosmetics** (documented in `tmux/README.md`): one blank seam line at the
   history/live boundary (deliberate padding so tmux's attach-time clear can't eat the replay
   tail); a wrapped line straddling that boundary is cut there (nothing lost/duplicated); a
   TUI's history replays as periodic snapshots of scrolled-off lines, not a keystroke recording.
@@ -126,13 +128,13 @@ python3 /home/jerry/Workspace/literature-review/session-spec-solutions/tests/har
 
 ## 5. Artifact index
 
-- Solution: `tmux-branch/{att,native.tmux.conf,README.md}`
+- Solution: `tmux/{dsh-tmux,native.tmux.conf,README.md}`
 - Harness + docs: `tests/harness.py`, `tests/README.md`
 - Results: `tests/results-tmux-branch.json` (all PASS), `tests/results-zmx-alt.json` (all PASS),
   `tests/results-control-bash.json` (control: T2/T3 FAIL as designed),
   `tests/results-fixture-tmux-replay.json`, `tests/results-neg-tmux-default.json`
   (default tmux correctly fails T1/T2 — the harness can fail)
-- Superseded draft: `tmux/` — do not use
+- Superseded draft: removed (`tmux-branch` itself was renamed to `tmux/`, see §1 naming note)
 
 ## 6. shpool addendum (verified 2026-07-05, after the report above)
 
@@ -144,19 +146,23 @@ independently adversarially verified — the same standard as tmux-branch. **Ver
 - **Adversarial**: TUI-redraw history reattached across a size change — replay is a
   vt100-rendered snapshot (colors kept, redraw noise collapsed, zero malformed escapes, zero
   forbidden sequences); unicode/CJK/emoji + 600-char lines intact at narrower widths.
-- **R2 transparency**: with the shipped config (`keybinding = []`) there are **zero**
+- **R2 transparency**: with the config as then shipped (`keybinding = []`) there are **zero**
   deviations — even lone Ctrl-Space reaches inner programs instantly. (The shpool *default*
   config swallows Ctrl-Space indefinitely as detach-chord prefix — fixed by our config.)
   Trade-off: no keyboard detach; detach by closing the terminal, or `shpool detach` elsewhere.
+  *(Config updated 2026-07-06, user-requested: single-key Ctrl-q → detach — one deliberate R2
+  exception, no chord latching. Re-verified 2026-07-16; see `shpool/README.md`.)*
 - **Invisible**: zero attach-time noise with `prompt_prefix = ""`, `motd = "never"`.
+  *(Since 2026-07-06 the config sets `prompt_prefix = "shpool:$SHPOOL_SESSION_NAME "` as a
+  deliberate in-session indicator; it decorates the shell prompt, not the attach stream.)*
 - **Caveats found**: (1) reattaching with *fewer rows* clips `old−new` trailing lines of the
   final screen (scrolled-off history is unaffected); tmux-branch has no such edge. (2) if the
   shpool daemon is SIGKILLed, sessions die within ~2s (tmux-branch has the same class of risk
   via the tmux server; both die on reboot). Mitigation: systemd user unit with
-  `Restart=on-failure` (template in `alternatives/shpool/README.md`) — `systemctl --user`
+  `Restart=on-failure` (template in `shpool/README.md`) — `systemctl --user`
   works on this box. (3) replay bounded by `session_restore_mode` lines (10000 configured)
   vs tmux-branch's 100000.
-- **Files**: `alternatives/shpool/{config.toml,att-shpool,README.md}`.
+- **Files**: `shpool/{config.toml,dsh-shpool,README.md}`.
 
 **Head-to-head**: equal harness scores, both adversarially confirmed. tmux-branch edges ahead
 on robustness details (no height-clip edge, 10× replay depth, battle-tested server binary);
@@ -164,6 +170,6 @@ shpool is architecturally purer (never owns the screen — the mouse dilemma is 
 impossible) with a simpler mental model and cleaner colored-history replay. Either satisfies
 the spec; pick tmux-branch for maximum proven robustness, shpool for maximum simplicity.
 
-Usage (shpool): `alternatives/shpool/att-shpool <name>` per terminal tab — auto-starts the
+Usage (shpool): `shpool/dsh-shpool <name>` per terminal tab — auto-starts the
 daemon; close the window to detach; `shpool --socket ~/.local/run/shpool/shpool.socket
 list|detach|kill <name>` to manage from elsewhere.

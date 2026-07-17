@@ -1,7 +1,6 @@
 #!/bin/sh
 # dsh-shpool — single entry point for persistent shpool sessions.
 #   dsh-shpool                 list sessions
-#   dsh-shpool ls              list sessions
 #   dsh-shpool <name>          attach or create session <name>  (Ctrl-q detaches)
 #   dsh-shpool attach <name>   same, for sessions named like a subcommand
 #   dsh-shpool kill <name>...  kill session(s)
@@ -14,12 +13,18 @@ mkdir -p "$RUN"
 SP() { "$BIN" --config-file "$DIR/config.toml" --socket "$RUN/shpool.socket" "$@"; }
 attach() { exec "$BIN" --daemonize --config-file "$DIR/config.toml" \
                 --socket "$RUN/shpool.socket" attach -f "$1"; }
-cmd=${1:-ls}
+cmd=${1:-}
 case "$cmd" in
-    ls|list)          SP list 2>/dev/null || echo "no sessions (daemon not running)";;
-    kill)             shift; SP kill "$@" && echo "killed: $*";;
+    '')               SP list 2>/dev/null || echo "no sessions (daemon not running)";;
+    kill)             shift
+                      # no-arg guard: bare `shpool kill` falls back to
+                      # $SHPOOL_SESSION_NAME, i.e. kills the session you are in
+                      [ $# -ge 1 ] || { echo "usage: dsh-shpool kill <name>..." >&2; exit 2; }
+                      SP kill "$@" && echo "killed: $*";;
     detach)           shift; SP detach "$@";;
-    attach)           shift; attach "$1";;
-    -h|--help|help)   sed -n '3,8p' "$0";;
+    attach)           shift
+                      [ $# -ge 1 ] || { echo "usage: dsh-shpool attach <name>" >&2; exit 2; }
+                      attach "$1";;
+    -h|--help|help)   sed -n '2,7p' "$0";;
     *)                attach "$cmd";;
 esac

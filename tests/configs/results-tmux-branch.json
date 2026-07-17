@@ -1,14 +1,14 @@
 {
   "harness_version": "1.0",
-  "tool": "shpool-wrapper",
-  "run_id": "spa8e153",
+  "tool": "tmux-branch",
+  "run_id": "spca4018",
   "config": {
-    "name": "shpool-wrapper",
-    "new_or_attach_cmd": "env SHPOOL_RUN_DIR=/tmp/shpool-wrap-{run_id} /home/jerry/Tools/detachable-shell/shpool/dsh-shpool {session}",
-    "pre": "rm -rf /tmp/shpool-wrap-{run_id}",
-    "post": "d=/tmp/shpool-wrap-{run_id}; if [ -f \"$d/daemonized-shpool.pid\" ]; then kill \"$(cat \"$d/daemonized-shpool.pid\")\" 2>/dev/null; fi; sleep 1; rm -rf \"$d\"; true"
+    "name": "tmux-branch",
+    "new_or_attach_cmd": "env ATT_SOCKET=jerryspec-harness /home/jerry/Tools/detachable-shell/tmux/dsh-tmux {session}",
+    "pre": "",
+    "post": "tmux -L jerryspec-harness kill-server 2>/dev/null || true"
   },
-  "started": "2026-07-16T16:30:45-0700",
+  "started": "2026-07-16T15:38:25-0700",
   "pty": {
     "cols": 120,
     "rows": 32,
@@ -17,10 +17,10 @@
   "tests": {
     "T1": {
       "pass": true,
-      "bytes_scanned": 24578,
+      "bytes_scanned": 39976,
       "clients_scanned": 12,
       "violations": [],
-      "detail": "24578 bytes over 12 clients scanned; 0 forbidden mouse/alt-screen enable sequences"
+      "detail": "39976 bytes over 12 clients scanned; 0 forbidden mouse/alt-screen enable sequences"
     },
     "T2": {
       "pass": true,
@@ -32,7 +32,7 @@
     },
     "T3": {
       "pass": true,
-      "counter_pid": 1972566,
+      "counter_pid": 1940345,
       "started_counting": true,
       "pid_alive_after_client_kill": true,
       "count_before_kill": 1,
@@ -42,20 +42,20 @@
       ],
       "still_advancing": true,
       "interactive_after_reattach": true,
-      "shell_pid_before_kill": 1972448,
-      "shell_pid_after_reattach": 1972448,
+      "shell_pid_before_kill": 1940257,
+      "shell_pid_after_reattach": 1940257,
       "same_shell_after_reattach": true,
-      "detail": "counter pid 1972566 alive=True advancing=True reattach-interactive=True same-shell=True ($$ 1972448 -> 1972448)"
+      "detail": "counter pid 1940345 alive=True advancing=True reattach-interactive=True same-shell=True ($$ 1940257 -> 1940257)"
     },
     "T4": {
       "pass": true,
       "violations": [],
       "sessions": [
-        "spa8e153-S1",
-        "spa8e153-S2",
-        "spa8e153-S3",
-        "spa8e153-S4",
-        "spa8e153-S5"
+        "spca4018-S1",
+        "spca4018-S2",
+        "spca4018-S3",
+        "spca4018-S4",
+        "spca4018-S5"
       ],
       "concurrently_interactive": 5,
       "detail": "5/5 sessions concurrently interactive, 0 isolation violations"
@@ -67,56 +67,55 @@
           "context": "initial-attach-S1",
           "client": "T2-A-S1",
           "pass": true,
-          "token": "PING-d5025c50"
+          "token": "PING-fd3013b0"
         },
         {
           "context": "reattach-S1-after-abrupt-kill",
           "client": "T2-B-S1",
           "pass": true,
-          "token": "PING-26f71a30"
+          "token": "PING-2e6ae0aa"
         },
         {
           "context": "reattach-S1-after-T3-kill",
           "client": "T3-C-S1",
           "pass": true,
-          "token": "PING-3fd293c7"
+          "token": "PING-b66b36b4"
         },
         {
           "context": "concurrent-reattach-S1",
           "client": "T4-re-S1",
           "pass": true,
-          "token": "PING-af57206c"
+          "token": "PING-cb05b06b"
         },
         {
           "context": "concurrent-reattach-S2",
           "client": "T4-re-S2",
           "pass": true,
-          "token": "PING-76323ce6"
+          "token": "PING-c00598b8"
         },
         {
           "context": "concurrent-reattach-S3",
           "client": "T4-re-S3",
           "pass": true,
-          "token": "PING-7786b833"
+          "token": "PING-86722516"
         },
         {
           "context": "concurrent-reattach-S4",
           "client": "T4-re-S4",
           "pass": true,
-          "token": "PING-1d912fae"
+          "token": "PING-e84327af"
         },
         {
           "context": "concurrent-reattach-S5",
           "client": "T4-re-S5",
           "pass": true,
-          "token": "PING-202a20f0"
+          "token": "PING-d697adaf"
         }
       ],
       "detail": "8/8 attach contexts answered within 5s after stray-byte burst"
     }
   },
-  "pre_exit": 0,
   "post_exit": 0,
   "all_pass": true,
-  "finished": "2026-07-16T16:31:11-0700"
+  "finished": "2026-07-16T15:38:50-0700"
 }
