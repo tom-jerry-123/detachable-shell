@@ -104,6 +104,19 @@ T detach-client -s "=$name" 2>/dev/null || true
 T resize-window -t "=$name:" -x "$cols" -y "$rows" 2>/dev/null || true
 T set-option -w -t "=$name:" window-size latest
 
+# The resize above SIGWINCHes the program inside; a TUI (e.g. Claude Code)
+# repaints its viewport in response.  Capturing mid-repaint archives a
+# half-drawn frame into the replay, so wait until output settles: two
+# consecutive identical (history_size, cursor) samples 150 ms apart, capped
+# at ~1.2 s so a continuously-busy session can never stall the attach.
+prev=
+for _ in 1 2 3 4 5 6 7 8; do
+    cur=$(T display-message -p -t "=$name:" '#{history_size},#{cursor_x},#{cursor_y}')
+    [ "$cur" = "$prev" ] && break
+    prev=$cur
+    sleep 0.15
+done
+
 hist=$(T display-message -p -t "=$name:" '#{history_size}')
 if [ "${hist:-0}" -gt 0 ]; then
     # Replay ONLY the scrolled-off history (lines -hist .. -1).  The visible

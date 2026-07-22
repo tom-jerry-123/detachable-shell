@@ -1,5 +1,17 @@
 # shpool as the persistence layer (spec candidate)
 
+> **Status (2026-07-22): persistence-only fallback — does not meet spec
+> 2(a) (see README § "The spec").** On reattach at a different
+> width, shpool replays stored lines
+> literally at the width they were authored — it never reflows to the new
+> client width — so full-width TUI lines (Claude Code pads essentially every
+> line) split into a content line plus an orphaned right-column fragment.
+> Measured at 123→98 cols: 20 padded lines → 13 content + 11 orphan lines
+> (`REPORT.md` §7). Same-size reattach is byte-faithful, and plain
+> stream-style output survives width changes fine. Use `dsh-tmux` for daily
+> TUI work; `dsh-shpool` remains sound for fixed-size terminals and
+> non-TUI workloads.
+
 [shpool](https://crates.io/crates/shpool) 0.11.0 (`~/.cargo/bin/shpool`,
 installed from crates.io) configured as a **pure persistence layer** per
 the project spec in `WHY.md`. With the config in this directory it passes all

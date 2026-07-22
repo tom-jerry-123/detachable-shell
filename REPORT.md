@@ -173,3 +173,43 @@ the spec; pick tmux-branch for maximum proven robustness, shpool for maximum sim
 Usage (shpool): `shpool/dsh-shpool <name>` per terminal tab — auto-starts the
 daemon; close the window to detach; `shpool --socket ~/.local/run/shpool/shpool.socket
 list|detach|kill <name>` to manage from elsewhere.
+
+## 7. Garbling investigation — Phase 0 verdict (2026-07-21)
+
+Context: the functional spec, items 1–4 (README § "The spec"), supersedes R1–R5
+after reattach-replay garbling (see
+`expl-1.png`, `expl-2.png`) became unreadable. Controlled experiments, all on isolated
+throwaway sockets (`dshx-*`), live sessions untouched:
+
+- **Storage exonerated.** A TUI redrawing blocks in place at stable size leaks zero
+  transient frames into tmux history; tmux 3.4 reflow across 123x43→98x33→123x43 is
+  lossless (no fragments, duplicates, or loss).
+- **Pollution mechanisms are archival, not rendering.** (a) Blocks taller than the
+  viewport permanently archive their intermediate frames. (b) An app redrawing with
+  stale row arithmetic after a width change archives orphaned old-generation lines
+  interleaved with new — the exact signature of the expl-*.png garble. Both land in
+  the grid itself (copy-mode shows them too); no replay-side fix can remove them.
+- **Real Claude Code (2026-07-21 build, haiku) redraws near-cleanly.** Idle resize
+  storm (2 rounds, 3 geometries): zero duplicates, zero chrome archived. Resize
+  *during* streaming (8 resizes/13 s): one stale 3-line generation archived, zero
+  content loss. Edit-tool diff block under storm: clean (thin coverage — render beat
+  the storm). Capture race (immediate-after-resize vs settled): 1 line.
+- **Verdict:** the visible garble in live sessions is dominated by months of
+  accumulated archive junk (heavier workloads, likely older Claude Code builds) plus
+  shpool's separate renderer issues — not by anything the current stack does per
+  attach. Wrapper hardening (settle-before-capture, sync passthrough) is the adopted
+  path; an architecture change is not warranted on this evidence.
+- **Spec-4 lever verified:** stock config sends zero synchronized-update (`?2026`) guards
+  to clients; `terminal-features '*:sync'` makes tmux emit them (5 in a short burst).
+- **shpool leg (2026-07-22, isolated daemon + throwaway tmux as the client):**
+  same-size reattach replay is faithful — 0 transient leaks, 0 duplicates, 0
+  fragments (the 190 oversized-block transients are app-inherent; tmux archived the
+  identical 190). Narrower reattach (123x43→98x33): stream-style content survives
+  (long paths rejoin; only the documented old−new height clip, 9 lines) — but
+  **full-width padded lines, which Claude Code uses for essentially every line,
+  shatter**: 20 padded lines replayed as 13 content lines + 11 orphaned
+  right-column fragments. Root cause: shpool replays stored visual lines literally
+  at their authored width and never reflows at the new client width (`dsh-tmux`
+  reflows via resize→settle→capture before replay). No config knob adds
+  replay-time reflow. **Verdict: `dsh-shpool` demoted to persistence-only
+  fallback — fails spec 2(a) for TUI content on any size-mismatched reattach.**

@@ -114,18 +114,37 @@ Honest gaps versus a human with a real mouse and clipboard:
 
 ### 30-second manual checklist (do this once per real terminal)
 
-In GNOME Terminal *and* in the VS Code integrated terminal:
+This is the user's six-gesture ritual from the spec (README § "The spec",
+items 2–4). In GNOME Terminal *and* in the VS Code integrated terminal:
 
 1. Attach to a session that has old output; run `seq 1 200`; close the
    window/tab (no detach). Reopen a terminal, re-attach.
 2. **Wheel-scroll up past the attach boundary** — the pre-attach lines
-   (`1..200` and older content) must be there, with no copy-mode indicator.
+   (`1..200` and older content) must be there, with no copy-mode indicator,
+   and must **read as they did when live** (no interleaved fragments or
+   duplicated blocks in newly-written history).
 3. **Drag-select one of those older lines** with the mouse — the highlight
    must be the terminal's own (still there after you keep typing).
 4. Press **Ctrl+Shift+C**, paste into a local app (browser/editor) — the
-   exact text must appear.
+   exact text must appear. Repeat once with a **long wrapped line (a file
+   path)**: it must paste as one line, no newline injected at the wrap.
 5. Type immediately after all of the above — keystrokes must reach the shell
    with no mode to exit (no `q`/`Esc` needed at any point).
+6. While a program is streaming output, wheel up and read: the view must
+   **stay put** (not get yanked to the bottom by new output). Separately,
+   watch a Claude Code edit/update block stream: no flicker or scrambled
+   mid-frames (compare bare ssh if unsure).
+
+### TUI fidelity machine test (spec-2 storage layer)
+
+`bash tests/tui-fidelity.sh` (exit 0 = PASS) runs the tagged workload
+`tests/tui-sim.sh` — transcript lines plus in-place block repaints tagged by
+generation — in a throwaway tmux server on the repo config, and asserts zero
+transient-frame leakage, zero duplicates, and zero wrap fragments, both at
+stable size and across a 123x43→98x33→123x43 resize round-trip. Oversized
+blocks (taller than the viewport) are reported but unscored: frames that
+scroll off the top are archived by any history-keeping terminal
+(app-inherent; REPORT.md §7).
 
 ## Safety notes
 
